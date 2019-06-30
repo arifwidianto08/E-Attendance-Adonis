@@ -30,9 +30,11 @@
     "@adonisjs/shield": "^1.0.8",
     "@adonisjs/validator": "^5.0.6",
     "@adonisjs/vow": "^1.0.17",
+    "logger": "0.0.1",
     "lucid-mongo": "^3.1.5",
     "require-all": "^3.0.0",
-    "swagger-jsdoc": "^3.2.3"
+    "swagger-jsdoc": "^3.2.3",
+    "winston": "^3.2.1"
   },
   "devDependencies": {
     "coveralls": "^3.0.2",

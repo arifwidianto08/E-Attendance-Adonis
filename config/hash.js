@@ -1,7 +1,5 @@
 'use strict'
 
-/** @type {import('@adonisjs/framework/src/Env')} */
-const Env = use('Env')
 
 module.exports = {
   /*
@@ -13,7 +11,7 @@ module.exports = {
   | auth module too.
   |
   */
-  driver: Env.get('HASH_DRIVER', 'bcrypt'),
+  driver:  'bcrypt',
 
   /*
   |--------------------------------------------------------------------------

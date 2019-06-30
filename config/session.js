@@ -1,7 +1,5 @@
 'use strict'
 
-/** @type {import('@adonisjs/framework/src/Env')} */
-const Env = use('Env')
 
 module.exports = {
   /*
@@ -15,7 +13,7 @@ module.exports = {
   | For `redis` driver, make sure to install and register `@adonisjs/redis`
   |
   */
-  driver: Env.get('SESSION_DRIVER', 'cookie'),
+  driver: 'cookie',
 
   /*
   |--------------------------------------------------------------------------

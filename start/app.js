@@ -27,7 +27,6 @@ const providers = [
   'lucid-mongo/providers/LucidMongoProvider',
   Helpers.appRoot('app/Providers/ExtendValidatorProvider'),
   Helpers.appRoot('app/Providers/ExtendResponseProvider'),
-  Helpers.appRoot('app/Providers/BindInstanceProvider')
 ]
 
 /*

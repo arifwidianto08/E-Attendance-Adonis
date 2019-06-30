@@ -1,8 +1,5 @@
 'use strict'
 
-/** @type {import('@adonisjs/framework/src/Env')} */
-const Env = use('Env')
-
 module.exports = {
   /*
   |--------------------------------------------------------------------------
@@ -72,7 +69,7 @@ module.exports = {
     uid: 'email',
     password: 'password',
     options: {
-      secret: Env.get('APP_KEY')
+      secret: 'kLSNXRA6DWOf6OTHUzTau4Qxa9wy9mzZ'
     }
   },
 
