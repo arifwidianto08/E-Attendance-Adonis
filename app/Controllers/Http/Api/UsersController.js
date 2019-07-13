@@ -24,7 +24,7 @@ class UsersController extends BaseController {
   async index({ request, response, decodeQuery }) {
     // const users = await User.query(decodeQuery()).fetch();
     const users = await User.all();
-    console.log(process.env);
+    console.log('Env', process.env);
     return response.apiCollection(users);
   }
 
