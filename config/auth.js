@@ -1,4 +1,6 @@
-'use strict'
+'use strict';
+
+const Env = use('Env');
 
 module.exports = {
   /*
@@ -13,7 +15,7 @@ module.exports = {
   | Available Serializers - lucid, database
   |
   */
-  authenticator: 'session',
+  authenticator: 'jwt',
 
   /*
   |--------------------------------------------------------------------------
@@ -25,10 +27,10 @@ module.exports = {
   |
   */
   session: {
-    serializer: 'lucid',
+    serializer: 'LucidMongo',
     model: 'App/Models/User',
     scheme: 'session',
-    uid: 'email',
+    uid: 'username',
     password: 'password'
   },
 
@@ -46,10 +48,10 @@ module.exports = {
   |
   */
   basic: {
-    serializer: 'lucid',
+    serializer: 'LucidMongo',
     model: 'App/Models/User',
     scheme: 'basic',
-    uid: 'email',
+    uid: 'username',
     password: 'password'
   },
 
@@ -63,13 +65,15 @@ module.exports = {
   |
   */
   jwt: {
-    serializer: 'lucid',
+    serializer: 'LucidMongo',
     model: 'App/Models/User',
+    token: 'App/Models/Token',
     scheme: 'jwt',
-    uid: 'email',
+    uid: 'username',
     password: 'password',
+    // expiry: '30d',
     options: {
-      secret: 'kLSNXRA6DWOf6OTHUzTau4Qxa9wy9mzZ'
+      secret: Env.get('APP_KEY')
     }
   },
 
@@ -82,10 +86,11 @@ module.exports = {
   |
   */
   api: {
-    serializer: 'lucid',
+    serializer: 'LucidMongo',
     model: 'App/Models/User',
+    token: 'App/Models/Token',
     scheme: 'api',
-    uid: 'email',
+    uid: 'username',
     password: 'password'
   }
-}
+};

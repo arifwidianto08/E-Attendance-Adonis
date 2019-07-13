@@ -19,6 +19,6 @@ Route.group(() => {
   Route.post('/login', 'Api/AttendanceController.login');
 
   Route.post('/check-in', 'Api/AttendanceController.checkIn');
-
+  Route.post('/logout', 'Api/AttendanceController.logout');
   Route.put('/:id/check-out', 'Api/AttendanceController.checkOut');
 }).prefix('/api/attendance');

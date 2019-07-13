@@ -52,20 +52,20 @@ class AttendanceController extends BaseController {
     attendances.set({
       password: password
     });
-
+    const jwt = await auth.attempt(username, password);
     await attendances.save();
-    return response.apiCollection(request.all());
+    return response.apiCollection({ ...request.all(), jwt });
   }
 
   async update({ response, request, params }) {
     // obj.response.apiCollection(JSON.stringify(obj));
-    const attendance = await Attendance.find(params.id)
+    const attendance = await Attendance.find(params.id);
     instance.merge(request.all());
     await instance.save();
     response.apiUpdated(attendance);
   }
 
-  async destroy({ response,params }) {
+  async destroy({ response, params }) {
     const attendance = await Attendance.find(params.id);
     await attendance.delete();
     response.apiDeleted();
@@ -90,11 +90,22 @@ class AttendanceController extends BaseController {
           user: userData,
           token: jwt.token
         };
+        response.apiSuccess(data);
+      } else {
+        throw LoginFailedException.invoke('Invalid username or password');
       }
     } catch (error) {
-      throw LoginFailedException.invoke('Invalid username or password');
+      throw LoginFailedException.invoke(`${error}`);
     }
-    response.apiSuccess(data);
+  }
+
+  async logout({ auth, response }) {
+    try {
+      await auth.logout();
+      response.apiSuccess();
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   async checkIn({ request, response }) {
@@ -118,7 +129,7 @@ class AttendanceController extends BaseController {
 
   async checkOut({ request, response, params }) {
     await this.validate(request.all(), checkOutValidation());
-    const attendance =await Attendance.find(params.id);
+    const attendance = await Attendance.find(params.id);
     attendance.merge(request.all());
     await attendance.save();
     return response.apiUpdated(attendance);

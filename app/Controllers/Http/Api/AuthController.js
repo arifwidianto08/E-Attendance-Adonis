@@ -62,26 +62,28 @@ class AuthController extends BaseController {
    *
    */
   async login({ request, response, auth }) {
-    const email = request.input('email');
+    const username = request.input('username');
     const password = request.input('password');
     await this.validate(request.all(), {
-      email: 'required',
+      username: 'required',
       password: 'required'
     });
-    // Attempt to login with email and password
+    // Attempt to login with username and password
     let data = null;
     let userData = null;
     try {
-      userData = await User.findBy({ email });
+      userData = await User.find({ username });
       const checkPassword = await Hash.verify(password, userData.password);
       if (checkPassword) {
-        const jwt = await auth.attempt(email, password);
+        const jwt = await auth.attempt(username, password);
         data = {
           user: userData,
           token: jwt.token
         };
+        console.log(jwt);
       }
     } catch (error) {
+      console.log(error);
       throw LoginFailedException.invoke('Invalid email or password');
     }
     // if (!data.user.verified) {

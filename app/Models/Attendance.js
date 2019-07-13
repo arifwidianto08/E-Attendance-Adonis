@@ -8,9 +8,13 @@ class Attendance extends Model {
     super.boot();
   }
 
-  static get hidden() {
-    return ['password'];
-  }
+  // token() {
+  //   return this.hasMany('App/Models/Token');
+  // }
+
+  // static get hidden() {
+  //   return ['password'];
+  // }
 }
 
 module.exports = Attendance;
