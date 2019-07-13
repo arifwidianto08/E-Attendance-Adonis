@@ -21,7 +21,7 @@ class UsersController extends BaseController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async index({ request, response, decodeQuery }) {
+  async index({ response }) {
     // const users = await User.query(decodeQuery()).fetch();
     const users = await User.all();
     return response.apiCollection(users);
