@@ -24,7 +24,7 @@ class UsersController extends BaseController {
   async index({ request, response, decodeQuery }) {
     // const users = await User.query(decodeQuery()).fetch();
     const users = await User.all();
-    console.log(JSON.stringify(users));
+    console.log(process.env);
     return response.apiCollection(users);
   }
 
@@ -65,7 +65,7 @@ class UsersController extends BaseController {
    * @param {Response} ctx.response
    */
   async show({ request, response, params, decodeQuery }) {
-    const user = await User.find(params.id)
+    const user = await User.find(params.id);
     // await user.related(decodeQuery().with).load()
     return response.apiItem(user);
   }
@@ -95,14 +95,12 @@ class UsersController extends BaseController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async destroy({ request, response, auth,params }) {
+  async destroy({ request, response, auth, params }) {
     const user = await User.find(params.id);
 
     await user.delete();
     return response.apiDeleted();
   }
-
-
 }
 
 module.exports = UsersController;
