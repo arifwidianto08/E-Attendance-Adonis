@@ -1,8 +1,6 @@
-'use strict'
-
+'use strict';
 
 module.exports = {
-
   /*
   |--------------------------------------------------------------------------
   | Application Name
@@ -24,8 +22,8 @@ module.exports = {
   | to encrypted cookies, sessions and other sensitive data.
   |
   */
- appKey: 'kLSNXRA6DWOf6OTHUzTau4Qxa9wy9mzZ',
- baseUrl: process.env.URL,
+  appKey: 'aNHeDTnxku0BZes27fhYEoiLzE53BRNb',
+  baseUrl: process.env.URL,
 
   http: {
     /*
@@ -79,7 +77,6 @@ module.exports = {
     |
     */
     jsonpCallback: 'callback',
-
 
     /*
     |--------------------------------------------------------------------------
@@ -238,4 +235,4 @@ module.exports = {
     path: '/',
     maxAge: 7200
   }
-}
+};
