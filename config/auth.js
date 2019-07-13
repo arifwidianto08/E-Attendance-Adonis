@@ -1,7 +1,5 @@
 'use strict';
 
-const Env = use('Env');
-
 module.exports = {
   /*
   |--------------------------------------------------------------------------
@@ -73,7 +71,7 @@ module.exports = {
     password: 'password',
     // expiry: '30d',
     options: {
-      secret: Env.get('APP_KEY')
+      secret: 'aNHeDTnxku0BZes27fhYEoiLzE53BRNb'
     }
   },
 
