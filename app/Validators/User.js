@@ -7,7 +7,8 @@ function storeUser() {
     nis: `required:min:4:max:10|unique:attendance,nis`,
     birthdate: 'required',
     username: `required|min:4|max:100|unique:attendance,username`,
-    password: 'required|min:6|max:255'
+    password: 'required|min:6|max:255',
+    imei: `required|unique:attendance,imei`
   };
 }
 

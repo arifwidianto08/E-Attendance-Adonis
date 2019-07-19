@@ -71,6 +71,12 @@ class AttendanceController extends BaseController {
     response.apiDeleted();
   }
 
+  async tryFormData({ request, response }) {
+    console.log('Request', request.all());
+    response.apiSuccess(request.all());
+    console.log(request.input('username'));
+  }
+
   async login({ request, response, auth }) {
     const username = request.input('username');
     const password = request.input('password');
@@ -94,6 +100,45 @@ class AttendanceController extends BaseController {
       } else {
         throw LoginFailedException.invoke('Invalid username or password');
       }
+    } catch (error) {
+      throw LoginFailedException.invoke(`${error}`);
+    }
+  }
+
+  async loginWithIMEI({ request, response, auth }) {
+    const imei = request.input('imei');
+    await this.validate(imei, 'required');
+
+    // Attempt to login with username and password
+    let data = null;
+    let userData = null;
+    try {
+      userData = await User.findBy({ imei });
+      data = {
+        user: userData
+      };
+      response.apiSuccess(data);
+    } catch (error) {
+      throw LoginFailedException.invoke(`${error}`);
+    }
+  }
+
+  async loginNIS({ request, response, auth }) {
+    const nis = request.input('nis');
+    const studentClass = request.input(studentClass);
+    await this.validate(
+      { nis, studentClass },
+      { nis: 'required', class: 'required' }
+    );
+
+    let data = null;
+    let userData = null;
+    try {
+      userData = await User.findBy({ nis });
+      data = {
+        user: userData
+      };
+      response.apiSuccess(data);
     } catch (error) {
       throw LoginFailedException.invoke(`${error}`);
     }
