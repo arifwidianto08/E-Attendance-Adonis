@@ -89,8 +89,8 @@ class AttendanceController extends BaseController {
     let userData = null;
     try {
       userData = await User.findBy({ username });
-      const checkPassword = await Hash.verify(password, userData.password);
-      if (checkPassword) {
+      const passwordIsMatch = await Hash.verify(password, userData.password);
+      if (passwordIsMatch) {
         const jwt = await auth.attempt(username, password);
         data = {
           id: userData._id,
@@ -98,6 +98,7 @@ class AttendanceController extends BaseController {
           name: userData.name,
           class: userData.class,
           nis: userData.nis,
+          imei: userData.imei,
           created_at: userData.created_at,
           updated_at: userData.updated_at,
           token: jwt.token
@@ -137,6 +138,7 @@ class AttendanceController extends BaseController {
           name: userData.name,
           class: userData.class,
           nis: userData.nis,
+          imei: userData.imei,
           created_at: userData.created_at,
           updated_at: userData.updated_at,
           token: jwt.token
@@ -176,6 +178,7 @@ class AttendanceController extends BaseController {
           name: userData.name,
           class: userData.class,
           nis: userData.nis,
+          imei: userData.imei,
           created_at: userData.created_at,
           updated_at: userData.updated_at,
           token: jwt.token
