@@ -9,8 +9,7 @@ const Hash = use('Hash');
 const LoginFailedException = use('App/Exceptions/LoginFailedException');
 const {
   storeAttendance,
-  checkInValidation,
-  checkOutValidation
+  checkInValidation
 } = require('../../../Validators/Attendance');
 /**
  *
@@ -202,30 +201,50 @@ class AttendanceController extends BaseController {
   }
 
   async checkIn({ request, response }) {
-    await this.validate(request.all(), checkInValidation());
     const user_id = request.input('user_id');
+    const classroom = request.input('classroom');
     const attendance = new Attendance({
-      ...request.all(),
-      checkOutTime: 'unset'
+      user_id,
+      classroom,
+      status: 'Checkin',
+      checkInTime: new Date().toISOString()
     });
+    await this.validate(request.all(), checkInValidation());
 
-    const existingCheckin = await Attendance.findBy({
-      user_id: user_id,
-      status: 'Checkin'
-    });
-    if (existingCheckin) {
-      return response.unprocessableEntity("the user hasn't checkout");
-    }
     await attendance.save();
-    return response.apiCreated(attendance);
+
+    return response.apiCreated({
+      user_id: attendance.user_id,
+      classroom: classroom,
+      status: attendance.status,
+      checkInTime: attendance.checkInTime,
+      created_at: attendance.created_at,
+      updated_at: attendance.updated_at,
+      id: attendance._id
+    });
   }
 
-  async checkOut({ request, response, params }) {
-    await this.validate(request.all(), checkOutValidation());
+  async checkOut({ response, params }) {
     const attendance = await Attendance.find(params.id);
-    attendance.merge(request.all());
     await attendance.save();
-    return response.apiUpdated(attendance);
+
+    if (attendance.status === 'Checkout') {
+      return response.unprocessableEntity('User already doing checkout');
+    } else {
+      attendance.status = 'Checkout';
+      attendance.checkOutTime = new Date();
+
+      return response.apiUpdated({
+        user_id: attendance.user_id,
+        classroom: attendance.classroom,
+        status: attendance.status,
+        checkInTime: attendance.checkInTime,
+        checkOutTime: attendance.checkOutTime,
+        created_at: attendance.created_at,
+        updated_at: attendance.updated_at,
+        id: attendance._id
+      });
+    }
   }
 }
 

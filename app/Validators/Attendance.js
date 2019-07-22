@@ -10,16 +10,13 @@ function storeAttendance() {
 function checkInValidation() {
   return {
     user_id: 'required',
-    checkInTime: 'required',
-    status: 'required',
-    token: 'required'
+    classroom: 'required|min:3'
   };
 }
 
 function checkOutValidation() {
   return {
-    checkOutTime: 'required',
-    status: 'required'
+    checkOutTime: 'required'
   };
 }
 
