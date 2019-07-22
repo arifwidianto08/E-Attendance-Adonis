@@ -69,9 +69,33 @@ module.exports = {
     scheme: 'jwt',
     uid: 'username',
     password: 'password',
-    // expiry: '30d',
+    expiry: '1d',
     options: {
       secret: 'aNHeDTnxku0BZes27fhYEoiLzE53BRNb'
+    }
+  },
+  withNis: {
+    serializer: 'LucidMongo',
+    model: 'App/Models/User',
+    token: 'App/Models/Token',
+    scheme: 'jwt',
+    uid: 'nis',
+    password: 'password',
+    expiry: '1d',
+    options: {
+      secret: 'bNHeDTnxku0BZes27fhYEoiLzE53BRNb'
+    }
+  },
+  withImei: {
+    serializer: 'LucidMongo',
+    model: 'App/Models/User',
+    token: 'App/Models/Token',
+    scheme: 'jwt',
+    uid: 'imei',
+    password: 'password',
+    expiry: '1d',
+    options: {
+      secret: 'cNHeDTnxku0BZes27fhYEoiLzE53BRNb'
     }
   },
 

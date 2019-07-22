@@ -15,7 +15,7 @@ Route.group(() => {
   Route.put('/:id', 'Api/AttendanceController.update');
 
   Route.post('/login', 'Api/AttendanceController.login');
-  Route.post('/login-nis', 'Api/AttendanceController.loginNIS');
+  Route.post('/login-with-nis', 'Api/AttendanceController.loginNIS');
   Route.post('/login-with-imei', 'Api/AttendanceController.loginWithIMEI');
 
   Route.post('/check-in', 'Api/AttendanceController.checkIn');

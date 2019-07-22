@@ -93,7 +93,13 @@ class AttendanceController extends BaseController {
       if (checkPassword) {
         const jwt = await auth.attempt(username, password);
         data = {
-          user: userData,
+          id: userData._id,
+          username: userData.username,
+          name: userData.name,
+          class: userData.class,
+          nis: userData.nis,
+          created_at: userData.created_at,
+          updated_at: userData.updated_at,
           token: jwt.token
         };
         response.apiSuccess(data);
@@ -107,17 +113,38 @@ class AttendanceController extends BaseController {
 
   async loginWithIMEI({ request, response, auth }) {
     const imei = request.input('imei');
-    await this.validate(imei, 'required');
-
-    // Attempt to login with username and password
+    const password = request.input('password');
+    await this.validate(
+      { imei, password },
+      {
+        imei: 'required',
+        password: 'required'
+      }
+    );
+    // Attempt to login with imei and password
     let data = null;
     let userData = null;
     try {
-      userData = await User.findBy({ imei });
-      data = {
-        user: userData
-      };
-      response.apiSuccess(data);
+      userData = await User.findBy({
+        imei: imei
+      });
+      const passwordIsMatch = await Hash.verify(password, userData.password);
+      if (passwordIsMatch) {
+        const jwt = await auth.authenticator('withImei').generate(userData);
+        data = {
+          id: userData._id,
+          username: userData.username,
+          name: userData.name,
+          class: userData.class,
+          nis: userData.nis,
+          created_at: userData.created_at,
+          updated_at: userData.updated_at,
+          token: jwt.token
+        };
+        response.apiSuccess(data);
+      } else {
+        throw LoginFailedException.invoke('Invalid imei or password');
+      }
     } catch (error) {
       throw LoginFailedException.invoke(`${error}`);
     }
@@ -125,20 +152,38 @@ class AttendanceController extends BaseController {
 
   async loginNIS({ request, response, auth }) {
     const nis = request.input('nis');
-    const studentClass = request.input(studentClass);
+    const password = request.input('password');
     await this.validate(
-      { nis, studentClass },
-      { nis: 'required', class: 'required' }
+      { nis, password },
+      {
+        nis: 'required',
+        password: 'required'
+      }
     );
-
+    // Attempt to login with nis and password
     let data = null;
     let userData = null;
     try {
-      userData = await User.findBy({ nis });
-      data = {
-        user: userData
-      };
-      response.apiSuccess(data);
+      userData = await User.findBy({
+        nis: typeof nis === 'string' ? Number(nis) : nis
+      });
+      const passwordIsMatch = await Hash.verify(password, userData.password);
+      if (passwordIsMatch) {
+        const jwt = await auth.authenticator('withNis').generate(userData);
+        data = {
+          id: userData._id,
+          username: userData.username,
+          name: userData.name,
+          class: userData.class,
+          nis: userData.nis,
+          created_at: userData.created_at,
+          updated_at: userData.updated_at,
+          token: jwt.token
+        };
+        response.apiSuccess(data);
+      } else {
+        throw LoginFailedException.invoke('Invalid nis or password');
+      }
     } catch (error) {
       throw LoginFailedException.invoke(`${error}`);
     }
@@ -149,7 +194,7 @@ class AttendanceController extends BaseController {
       await auth.logout();
       response.apiSuccess();
     } catch (error) {
-      console.log(error);
+      throw LoginFailedException.invoke(`${error}`);
     }
   }
 
