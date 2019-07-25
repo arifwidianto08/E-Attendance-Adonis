@@ -70,8 +70,9 @@ class ExtendResponseProvider extends ServiceProvider {
     Response.macro("unprocessableEntity", function(errorMessage) {
       this.status(422).json({
         status: 422,
-        message: "Unprocessable Entity",
-        data: `${errorMessage}`
+        code: "Unprocessable Entity",
+        message: `${errorMessage}`,
+        data: null
       });
     });
   }

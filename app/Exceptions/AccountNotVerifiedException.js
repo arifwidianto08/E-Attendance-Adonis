@@ -17,8 +17,9 @@ class AccountNotVerifiedException extends LogicalException {
     if (request.url().indexOf("/api/") === 0) {
       let json = {
         status: error.status,
-        message: error.code,
-        data: error.message
+        message: error.message,
+        data: null,
+        code: error.code
       };
       if (use("Env").get("NODE_ENV") === "development") {
         json.traces = error.stack;
