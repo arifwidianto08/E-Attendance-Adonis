@@ -215,7 +215,7 @@ class AttendanceController extends BaseController {
       user_id: user_id
     });
     await this.validate(request.all(), checkInValidation());
-    console.log(existingAttendance);
+
     if (existingAttendance) {
       return response.unprocessableEntity("User still hasn't checkout");
     } else {
