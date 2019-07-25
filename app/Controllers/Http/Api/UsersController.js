@@ -1,13 +1,13 @@
-'use strict';
+"use strict";
 /** @typedef {import('@adonisjs/framework/src/Request')} Request */
 /** @typedef {import('@adonisjs/auth/src/Schemes/Session')} AuthSession */
 
-const BaseController = require('./BaseController');
+const BaseController = require("./BaseController");
 /** @type {typeof import('../../../Models/User')} */
-const User = use('App/Models/User');
-const Hash = use('Hash');
-const UnAuthorizeException = use('App/Exceptions/UnAuthorizeException');
-const { storeUser } = require('../../../Validators/User');
+const User = use("App/Models/User");
+const Hash = use("Hash");
+const UnAuthorizeException = use("App/Exceptions/UnAuthorizeException");
+const { storeUser } = require("../../../Validators/User");
 /**
  *
  * @class UsersController
@@ -38,21 +38,31 @@ class UsersController extends BaseController {
   async store({ request, response }) {
     await this.validate(request.all(), storeUser());
     const user = new User(request.all());
-    const username = request.input('username');
+    const username = request.input("username");
 
     // validate body
     const usernameExsist = await User.findBy({ username });
     if (usernameExsist) {
-      return response.unprocessableEntity('Username already exist');
+      return response.unprocessableEntity("Username already exist");
     }
 
-    const password = await Hash.make(request.input('password'));
+    const password = await Hash.make(request.input("password"));
     user.set({
       password: password
     });
 
     await user.save();
-    return response.apiCreated(user);
+    return response.apiCreated({
+      username: user.username,
+      name: user.name,
+      grade: user.grade,
+      nis: user.nis,
+      birthdate: user.birthdate,
+      imei: user.imei,
+      created_at: user.created_at,
+      updated_at: user.updated_at,
+      id: user._id
+    });
   }
 
   /**
@@ -66,7 +76,16 @@ class UsersController extends BaseController {
   async show({ request, response, params, decodeQuery }) {
     const user = await User.find(params.id);
     // await user.related(decodeQuery().with).load()
-    return response.apiItem(user);
+    return response.apiItem({
+      id: user._id,
+      username: user.username,
+      name: user.name,
+      grade: user.grade,
+      nis: user.nis,
+      imei: user.imei,
+      created_at: user.created_at,
+      updated_at: user.updated_at
+    });
   }
 
   /**
@@ -81,7 +100,7 @@ class UsersController extends BaseController {
     if (String(auth.user._id) !== String(user._id)) {
       throw UnAuthorizeException.invoke();
     }
-    user.merge(request.only(['name', 'locale']));
+    user.merge(request.only(["name", "locale"]));
     await user.save();
     return response.apiUpdated(user);
   }

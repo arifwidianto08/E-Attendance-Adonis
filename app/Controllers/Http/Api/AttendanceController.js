@@ -1,16 +1,16 @@
-'use strict';
+"use strict";
 /** @typedef {import('@adonisjs/framework/src/Request')} Request */
 
-const BaseController = require('./BaseController');
+const BaseController = require("./BaseController");
 /** @type {typeof import('../../../Models/Attendance')} */
-const Attendance = use('App/Models/Attendance');
-const User = use('App/Models/User');
-const Hash = use('Hash');
-const LoginFailedException = use('App/Exceptions/LoginFailedException');
+const Attendance = use("App/Models/Attendance");
+const User = use("App/Models/User");
+const Hash = use("Hash");
+const LoginFailedException = use("App/Exceptions/LoginFailedException");
 const {
   storeAttendance,
   checkInValidation
-} = require('../../../Validators/Attendance');
+} = require("../../../Validators/Attendance");
 /**
  *
  * @class AttendanceController
@@ -37,17 +37,17 @@ class AttendanceController extends BaseController {
 
   async store({ request, response }) {
     const attendances = new Attendance(request.all());
-    const username = request.input('username');
+    const username = request.input("username");
 
     // validate body
     await this.validate(request.all(), storeAttendance());
 
     const usernameExsist = await Attendance.findBy({ username });
     if (usernameExsist) {
-      return response.unprocessableEntity('Username already exist');
+      return response.unprocessableEntity("Username already exist");
     }
 
-    const password = await Hash.make(request.input('password'));
+    const password = await Hash.make(request.input("password"));
     attendances.set({
       password: password
     });
@@ -71,21 +71,22 @@ class AttendanceController extends BaseController {
   }
 
   async tryFormData({ request, response }) {
-    console.log('Request', request.all());
+    console.log("Request", request.all());
     response.apiSuccess(request.all());
-    console.log(request.input('username'));
+    console.log(request.input("username"));
   }
 
   async login({ request, response, auth }) {
-    const username = request.input('username');
-    const password = request.input('password');
+    const username = request.input("username");
+    const password = request.input("password");
     await this.validate(request.all(), {
-      username: 'required',
-      password: 'required'
+      username: "required",
+      password: "required"
     });
     // Attempt to login with username and password
     let data = null;
     let userData = null;
+
     try {
       userData = await User.findBy({ username });
       const passwordIsMatch = await Hash.verify(password, userData.password);
@@ -95,7 +96,7 @@ class AttendanceController extends BaseController {
           id: userData._id,
           username: userData.username,
           name: userData.name,
-          class: userData.class,
+          grade: userData.grade,
           nis: userData.nis,
           imei: userData.imei,
           created_at: userData.created_at,
@@ -104,7 +105,7 @@ class AttendanceController extends BaseController {
         };
         response.apiSuccess(data);
       } else {
-        throw LoginFailedException.invoke('Invalid username or password');
+        throw LoginFailedException.invoke("Invalid username or password");
       }
     } catch (error) {
       throw LoginFailedException.invoke(`${error}`);
@@ -112,13 +113,13 @@ class AttendanceController extends BaseController {
   }
 
   async loginWithIMEI({ request, response, auth }) {
-    const imei = request.input('imei');
-    const password = request.input('password');
+    const imei = request.input("imei");
+    const password = request.input("password");
     await this.validate(
       { imei, password },
       {
-        imei: 'required',
-        password: 'required'
+        imei: "required",
+        password: "required"
       }
     );
     // Attempt to login with imei and password
@@ -130,12 +131,12 @@ class AttendanceController extends BaseController {
       });
       const passwordIsMatch = await Hash.verify(password, userData.password);
       if (passwordIsMatch) {
-        const jwt = await auth.authenticator('withImei').generate(userData);
+        const jwt = await auth.authenticator("withImei").generate(userData);
         data = {
           id: userData._id,
           username: userData.username,
           name: userData.name,
-          class: userData.class,
+          grade: userData.grade,
           nis: userData.nis,
           imei: userData.imei,
           created_at: userData.created_at,
@@ -144,7 +145,7 @@ class AttendanceController extends BaseController {
         };
         response.apiSuccess(data);
       } else {
-        throw LoginFailedException.invoke('Invalid imei or password');
+        throw LoginFailedException.invoke("Invalid imei or password");
       }
     } catch (error) {
       throw LoginFailedException.invoke(`${error}`);
@@ -152,13 +153,13 @@ class AttendanceController extends BaseController {
   }
 
   async loginNIS({ request, response, auth }) {
-    const nis = request.input('nis');
-    const password = request.input('password');
+    const nis = request.input("nis");
+    const password = request.input("password");
     await this.validate(
       { nis, password },
       {
-        nis: 'required',
-        password: 'required'
+        nis: "required",
+        password: "required"
       }
     );
     // Attempt to login with nis and password
@@ -166,16 +167,16 @@ class AttendanceController extends BaseController {
     let userData = null;
     try {
       userData = await User.findBy({
-        nis: typeof nis === 'string' ? Number(nis) : nis
+        nis: typeof nis === "string" ? Number(nis) : nis
       });
       const passwordIsMatch = await Hash.verify(password, userData.password);
       if (passwordIsMatch) {
-        const jwt = await auth.authenticator('withNis').generate(userData);
+        const jwt = await auth.authenticator("withNis").generate(userData);
         data = {
           id: userData._id,
           username: userData.username,
           name: userData.name,
-          class: userData.class,
+          grade: userData.grade,
           nis: userData.nis,
           imei: userData.imei,
           created_at: userData.created_at,
@@ -184,7 +185,7 @@ class AttendanceController extends BaseController {
         };
         response.apiSuccess(data);
       } else {
-        throw LoginFailedException.invoke('Invalid nis or password');
+        throw LoginFailedException.invoke("Invalid nis or password");
       }
     } catch (error) {
       throw LoginFailedException.invoke(`${error}`);
@@ -201,37 +202,45 @@ class AttendanceController extends BaseController {
   }
 
   async checkIn({ request, response }) {
-    const user_id = request.input('user_id');
-    const classroom = request.input('classroom');
+    const user_id = request.input("user_id");
+    const classroom = request.input("classroom");
     const attendance = new Attendance({
       user_id,
       classroom,
-      status: 'Checkin',
+      status: "Checkin",
       checkInTime: new Date().toISOString()
     });
-    await this.validate(request.all(), checkInValidation());
-
-    await attendance.save();
-
-    return response.apiCreated({
-      user_id: attendance.user_id,
-      classroom: classroom,
-      status: attendance.status,
-      checkInTime: attendance.checkInTime,
-      created_at: attendance.created_at,
-      updated_at: attendance.updated_at,
-      id: attendance._id
+    const existingAttendance = await Attendance.findBy({
+      status: "Checkin",
+      user_id: user_id
     });
+    await this.validate(request.all(), checkInValidation());
+    console.log(existingAttendance);
+    if (existingAttendance) {
+      return response.unprocessableEntity("User still hasn't checkout");
+    } else {
+      await attendance.save();
+
+      return response.apiCreated({
+        user_id: attendance.user_id,
+        classroom: classroom,
+        status: attendance.status,
+        checkInTime: attendance.checkInTime,
+        created_at: attendance.created_at,
+        updated_at: attendance.updated_at,
+        id: attendance._id
+      });
+    }
   }
 
   async checkOut({ response, params }) {
     const attendance = await Attendance.find(params.id);
     await attendance.save();
 
-    if (attendance.status === 'Checkout') {
-      return response.unprocessableEntity('User already doing checkout');
+    if (attendance.status === "Checkout") {
+      return response.unprocessableEntity("User already doing checkout");
     } else {
-      attendance.status = 'Checkout';
+      attendance.status = "Checkout";
       attendance.checkOutTime = new Date();
 
       return response.apiUpdated({

@@ -1,6 +1,6 @@
-'use strict'
+"use strict";
 
-const BaseExceptionHandler = use('BaseExceptionHandler')
+const BaseExceptionHandler = use("BaseExceptionHandler");
 
 /**
  * This class handles all exceptions thrown during
@@ -20,27 +20,29 @@ class ExceptionHandler extends BaseExceptionHandler {
    *
    * @return {void}
    */
-  async handle (error, { request, response, session }) {
-    if (request.url().indexOf('/api/') === 0) {
+  async handle(error, { request, response, session }) {
+    if (request.url().indexOf("/api/") === 0) {
       let json = {
         status: error.status,
         code: error.code,
-        message: error.message,
+        data: error.message,
         errors: error.errors
+      };
+      if (use("Env").get("NODE_ENV") === "development") {
+        json.traces = error.stack;
       }
-      if (use('Env').get('NODE_ENV') === 'development') {
-        json.traces = error.stack
-      }
-      return response.status(error.status).json(json)
+      return response.status(error.status).json(json);
     }
 
-    if (error.code === 'E_INVALID_SESSION') {
-      session.flash({ error: 'You must be authenticated to access this page!' })
+    if (error.code === "E_INVALID_SESSION") {
+      session.flash({
+        error: "You must be authenticated to access this page!"
+      });
 
-      return response.redirect('/login')
+      return response.redirect("/login");
     }
 
-    return super.handle(...arguments)
+    return super.handle(...arguments);
   }
 
   /**
@@ -53,9 +55,9 @@ class ExceptionHandler extends BaseExceptionHandler {
    *
    * @return {void}
    */
-  async report (error, { request }) {
-    error.status === 500 && console.log(error)
+  async report(error, { request }) {
+    error.status === 500 && console.log(error);
   }
 }
 
-module.exports = ExceptionHandler
+module.exports = ExceptionHandler;
