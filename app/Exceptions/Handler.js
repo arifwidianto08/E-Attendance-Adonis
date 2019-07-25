@@ -24,7 +24,7 @@ class ExceptionHandler extends BaseExceptionHandler {
     if (request.url().indexOf("/api/") === 0) {
       let json = {
         status: error.status,
-        code: error.code,
+        message: error.code,
         data: error.message,
         errors: error.errors
       };

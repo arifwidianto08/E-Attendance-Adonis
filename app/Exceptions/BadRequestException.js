@@ -13,7 +13,7 @@ class BadRequestException extends HttpException {
     if (request.url().indexOf("/api/") === 0) {
       let json = {
         status: error.status,
-        code: error.code,
+        message: error.code,
         data: error.message
       };
       if (use("Env").get("NODE_ENV") === "development") {
